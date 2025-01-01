@@ -38,4 +38,15 @@ def soma(x, y):
 def subtracao(x, y):
     return x-y
 
+def exponencial(x, y):
+    if y == 0:
+        return 1
+    return multiplicacao(x, exponencial(x, y-1))
+
+def fatorial(x):
+    if x == 0:
+        return 1
+    return multiplicacao(x, fatorial(x-1))
+
+print(fatorial(7))
 
