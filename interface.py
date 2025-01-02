@@ -1,5 +1,5 @@
 import tkinter as tk
-from main import divisao, subtracao, multiplicacao, soma, exponencial, fatorial
+from main import divisao, subtracao, multiplicacao, soma, exponencial, fatorial, fibonacci_hash
 
 # Funções da calculadora
 def btn_click(item):
@@ -10,9 +10,13 @@ def btn_click(item):
     if isinstance(item, (int, float)):
         number += str(item)
     else:
-        numbers.append(int(number))
-        number = ""
         operators.append(item)
+        if number == "" and "-" in operators:
+            number = "-"
+            operators.pop()
+        else:
+            numbers.append(int(number))
+            number = ""
     expression += str(item)
     input_text.set(expression)
 
@@ -33,14 +37,13 @@ def calculate():
         global number
         global operators
         global numbers
-        
+
         if number == "":
-            if "!" not in operators:
+            if "!" not in operators and "f" not in operators:
                 raise ValueError("Nenhum número foi fornecido para cálculo")
         else:
             numbers.append(int(number))
             number = ""
-        
 
         while len(operators) > 0:
             if operators[0] == '+':
@@ -53,11 +56,19 @@ def calculate():
                 result = divisao(numbers[0], numbers[1])
             elif operators[0] == '^':
                 result = exponencial(numbers[0], numbers[1])
-            elif operators[0] == '!':  # Adicionando o fatorial
+            elif operators[0] == '!':
                 result = fatorial(numbers[0])
-            numbers = numbers[2:]  # Atualiza a lista de números
+            elif operators[0] == 'f':
+                result = fibonacci_hash(numbers[0])
+
+            if operators[0] in ('!', 'f'):
+                numbers = numbers[1:]  # Remove o número processado
+            else:
+                numbers = numbers[2:]  # Atualiza a lista de números
+
             operators = operators[1:]  # Remove o operador já processado
             numbers.insert(0, result)  # Insere o resultado como o primeiro número
+
         result = str(numbers[0])
         input_text.set(result)
         numbers = []
@@ -95,9 +106,9 @@ btns_frame.pack()
 
 # Botões layout
 btn_texts = [
-    (7, 8, 9, '/','^'),
-    (4, 5, 6, '*', '!'),  # Fatorial adicionado aqui
-    (1, 2, 3, '-', 'f'),
+    (7, 8, 9, '/', '^'),
+    (4, 5, 6, '*', '!'),
+    (1, 2, 3, '-', 'f'), 
     ("", 0, '=', '+', 'C'),
 ]
 
